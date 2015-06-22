@@ -12,14 +12,12 @@ import streamcontroller from './src/controllers/stream';
 
 import todoresource from './src/resources/todo';
 
+route.get();
+
 const apiroutes =
     route('/',
-        route('/todos-old', function*(next, { response }) {
-            response.body = ['todo'];
-        }),
         route('/todos', todoresource())
     );
-
 
 const routes =
     route('/',
