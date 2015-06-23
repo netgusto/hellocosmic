@@ -12,7 +12,7 @@ import streamcontroller from './src/controllers/stream';
 
 import todoresource from './src/resources/todo';
 
-route.get();
+//route.get();
 
 const apiroutes =
     route('/',
