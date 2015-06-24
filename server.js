@@ -1,6 +1,6 @@
 import http from 'http';
 import { DefaultHttpHandler } from 'cosmic';
-import App from './app';
+import App from './src/app';
 
 const app = App();
 http.createServer(DefaultHttpHandler(app)).listen(3000);
