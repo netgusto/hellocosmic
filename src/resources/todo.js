@@ -1,6 +1,6 @@
 'use strict';
 
-import { route } from 'cosmic';
+import { route } from 'airline';
 
 const mwFetch = function*(next, { request, response }) {
 

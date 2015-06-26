@@ -1,6 +1,6 @@
 import http from 'http';
 import fs from 'fs';
-import { Cosmic, DefaultHttpHandler, route } from 'cosmic';
+import { Airline, route } from 'airline';
 
 import responsetime from './middlewares/responsetime';
 import logger from './middlewares/logger';
@@ -14,11 +14,23 @@ import todoresource from './resources/todo';
 
 export default function() {
 
-    const easterEggMW = function*(next, { response }) { yield next; response.setHeader('X-Middlewared', 'yes'); };
+    const easterEggMW = function*(next, { response }) {
+        yield next;
+        response.setHeader('X-Middlewared', 'yes');
+    };
 
-    const helloService = function(world, intonation) { return function(name = world) { return intonation('Hello, ' + name); } };
-    const worldService = function() { return 'World' };
-    const intonationService = function() { return function(sentence) { return sentence + ' ?!'; } };
+    const helloService = function(world, intonation, promise) {
+        //console.log(promise);
+        return function(name = world) {
+            return intonation('Hello!, ' + name);
+        }
+    };
+
+    const intonationService = function() {
+        return function(sentence) {
+            return sentence + ' ?!';
+        }
+    };
 
     const apiroutes =
         route('/',
@@ -33,13 +45,20 @@ export default function() {
             route('/api', [easterEggMW], apiroutes)
         );
 
-    return new Cosmic()
-        .service('hello', ['world', 'intonation', helloService])
-        .service('world', worldService)
+    return new Airline()
+        .service('world', 'World !!!')
         .service('intonation', intonationService)
-        .use(responsetime())
-        .use(logger())
-        .use(contentlength())
+        .service('promise', function() {
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    resolve("promised !");
+                }, 10000);
+            });
+        })
+        .service('hello', ['world', 'intonation', 'promise', helloService])
+        //.use(responsetime())
+        //.use(logger())
+        //.use(contentlength())
         .routes(routes);
 };
 
