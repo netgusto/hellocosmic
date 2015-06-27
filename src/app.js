@@ -20,9 +20,8 @@ export default function() {
     };
 
     const helloService = function(world, intonation, promise) {
-        //console.log(promise);
         return function(name = world) {
-            return intonation('Hello!, ' + name);
+            return intonation('Hello!, ' + name + '; Promise says : ' + promise);
         }
     };
 
@@ -46,19 +45,24 @@ export default function() {
         );
 
     return new Airline()
-        .service('world', 'World !!!')
+        .service('world', ['promise'], function(promise) { return 'World !!!' + promise; })
         .service('intonation', intonationService)
-        .service('promise', function() {
-            return new Promise(resolve => {
-                setTimeout(() => {
-                    resolve("promised !");
-                }, 10000);
+        .service('promise', ['otherpromise'], function(otherpromise) {
+            return new Promise(function(resolve) {
+                setTimeout(function() {
+                    resolve(new Promise(function(resolve2) {
+                        resolve2("I promise nested, me and " + otherpromise + " !!!!");
+                    }));
+                }, 3000);
             });
         })
-        .service('hello', ['world', 'intonation', 'promise', helloService])
-        //.use(responsetime())
-        //.use(logger())
-        //.use(contentlength())
+        .service('otherpromise', function() {
+            return Promise.resolve('yeah yeah');
+        })
+        .service('hello', ['world', 'intonation', 'promise'], helloService)
+        .use(responsetime())
+        .use(logger())
+        .use(contentlength())
         .routes(routes);
 };
 
